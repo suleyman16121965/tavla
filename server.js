@@ -8,11 +8,6 @@ const server = http.createServer((req, res) => {
 
 const wss = new WebSocketServer({ server });
 
-let rooms = {};
-...
-
-const wss = new WebSocketServer({ server });
-
 let rooms = {}; 
 // rooms = {
 //   "room1": [
@@ -35,9 +30,6 @@ wss.on("connection", (ws) => {
   ws.on("message", (msg) => {
     const data = JSON.parse(msg);
 
-    // -------------------------
-    // PLAYER JOIN
-    // -------------------------
     if (data.type === "join") {
       const { room, username, city, role } = data;
 
@@ -48,7 +40,6 @@ wss.on("connection", (ws) => {
 
       console.log(`Player joined room ${room}: ${username}`);
 
-      // Send updated player list
       broadcast(room, {
         type: "players",
         players: rooms[room].map(p => ({
@@ -59,9 +50,6 @@ wss.on("connection", (ws) => {
       });
     }
 
-    // -------------------------
-    // CHAT MESSAGE
-    // -------------------------
     if (data.type === "chat") {
       broadcast(ws.room, {
         type: "chat",
@@ -70,24 +58,15 @@ wss.on("connection", (ws) => {
       });
     }
 
-    // -------------------------
-    // MOVE MESSAGE
-    // -------------------------
     if (data.type === "move") {
       broadcast(ws.room, data);
     }
 
-    // -------------------------
-    // DICE MESSAGE
-    // -------------------------
     if (data.type === "dice") {
       broadcast(ws.room, data);
     }
   });
 
-  // -------------------------
-  // PLAYER DISCONNECT
-  // -------------------------
   ws.on("close", () => {
     if (!ws.room || !rooms[ws.room]) return;
 
@@ -110,5 +89,3 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log("WebSocket server running on port " + PORT);
 });
-
-
