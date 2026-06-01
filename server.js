@@ -96,10 +96,11 @@ wss.on("connection", (ws) => {
     console.log("Client disconnected");
   });
 });
-
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+
+server.listen(PORT, "0.0.0.0", () => {
   console.log("WebSocket server running on port " + PORT);
 });
+
 
 
